@@ -5,72 +5,79 @@
   <title>Happy Anniversary ❤️</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <style>
-    :root { --accent: #b30059; --bg1: #ffdde1; --bg2: #ee9ca7; }
-    body { font-family: 'Segoe UI', Arial, sans-serif; background: linear-gradient(to right, var(--bg1), var(--bg2)); margin:0; padding:0; color:#222; text-align:center; }
-    header{padding:28px 16px 8px} h1{margin:0;color:var(--accent);font-size:1.8rem}
+    :root { --accent: #b30059; --bg: #ffe6f0; --card: #ffffff; }
+    html,body{height:100%;margin:0;font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:#222;text-align:center}
+    header{padding:28px 16px 8px} 
+    h1{margin:0;color:var(--accent);font-size:1.8rem}
     .container{max-width:900px;margin:18px auto;padding:0 16px}
     .slideshow-container{position:relative;max-width:700px;margin:24px auto}
-    .slides{display:none} .slides img{width:100%;border-radius:10px;box-shadow:0 6px 18px rgba(0,0,0,.12);display:block}
+    .slides{display:none}
+    .slides img{width:100%;border-radius:10px;box-shadow:0 6px 18px rgba(0,0,0,.12);display:block}
     .nav{position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,.35);color:#fff;padding:10px 14px;border-radius:8px;cursor:pointer;user-select:none;font-size:20px}
     .nav.prev{left:8px}.nav.next{right:8px}
-    .message{background:rgba(255,255,255,0.95);margin:20px auto;padding:18px;width:85%;border-radius:10px;font-size:1.05rem;box-shadow:0 6px 18px rgba(0,0,0,.06)}
+    .message{background:var(--card);margin:20px auto;padding:18px;width:85%;border-radius:10px;font-size:1.05rem;box-shadow:0 6px 18px rgba(0,0,0,.06)}
     video{width:100%;max-width:700px;border-radius:10px;box-shadow:0 6px 18px rgba(0,0,0,.12);margin:18px auto;display:block}
     .overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;z-index:9999}
     .modal{background:#fff;padding:22px;border-radius:12px;width:92%;max-width:420px;text-align:center;box-shadow:0 12px 36px rgba(0,0,0,.25)}
-    .modal h2{margin:0 0 12px;color:var(--accent)} .modal p{margin:0 0 14px;color:#333}
+    .modal h2{margin:0 0 12px;color:var(--accent)} 
+    .modal p{margin:0 0 14px;color:#333}
     .name-input{width:100%;padding:10px 12px;font-size:1rem;border-radius:8px;border:1px solid #ddd;margin-bottom:12px;box-sizing:border-box}
     .btn{background:var(--accent);color:#fff;border:none;padding:10px 14px;border-radius:8px;font-size:1rem;cursor:pointer}
+    .btn.secondary{background:#eee;color:#333}
     .error{color:#b30059;margin-top:8px;font-weight:600;display:none}
     .hidden{display:none}
     .change-name{margin-top:10px;display:inline-block;color:var(--accent);cursor:pointer;font-weight:600}
     /* Final overlay */
     #finalOverlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:10000;align-items:center;justify-content:center}
     #finalCard{background:#fff;border-radius:12px;padding:22px;max-width:520px;width:92%;text-align:center;box-shadow:0 12px 36px rgba(0,0,0,.28);position:relative;overflow:hidden}
-    #confettiContainer{position:absolute;inset:0;pointer-events:none}
+    #confettiContainer{position:absolute;inset:0;pointer-events:none;overflow:hidden}
     #finalCard h2{margin:0 0 8px;color:var(--accent)}
     #finalCard p{margin:0 0 18px;font-size:1.05rem;color:#333}
     #finalCard button{margin:0 6px}
+    pre#log{white-space:pre-wrap;text-align:left;max-width:700px;margin:12px auto;padding:8px;background:#fafafa;border-radius:8px;border:1px solid #eee;display:none}
     @media (max-width:480px){h1{font-size:1.4rem}.modal{padding:16px}}
   </style>
 </head>
 <body>
 
   <!-- Name prompt overlay (always asks) -->
-  <div id="nameOverlay" class="overlay" role="dialog" aria-modal="true">
+  <div id="nameOverlay" class="overlay" role="dialog" aria-modal="true" aria-labelledby="promptTitle">
     <div class="modal" role="document">
-      <h2>One small thing first…</h2>
+      <h2 id="promptTitle">One small thing first…</h2>
       <p>Please tell me your name to reveal the surprise</p>
       <input id="nameInput" class="name-input" type="text" placeholder="Enter your name" aria-label="Your name" autocomplete="off" />
-      <div><button id="startBtn" class="btn">Show Surprise</button></div>
+      <div style="margin-top:8px">
+        <button id="startBtn" class="btn">Show Surprise</button>
+      </div>
       <div id="errorMsg" class="error">Sorry, that name is not allowed. Please try again.</div>
     </div>
   </div>
 
   <header><h1 id="pageTitle">Happy Anniversary</h1></header>
 
-  <main class="container">
-    <div id="greeting" class="message hidden"></div>
+  <main class="container" id="mainContent" aria-hidden="true">
+    <div id="greeting" class="message hidden" aria-hidden="true"></div>
 
     <div id="slideshow" class="slideshow-container hidden" aria-hidden="true">
       <div class="slides"><img src="canva1.jpeg" alt="Design 1"></div>
       <div class="slides"><img src="canva2.jpeg" alt="Design 2"></div>
-      <div class="nav prev" id="prevBtn" aria-label="Previous slide">❮</div>
-      <div class="nav next" id="nextBtn" aria-label="Next slide">❯</div>
+      <div class="nav prev" id="prevBtn" aria-label="Previous slide" tabindex="0">❮</div>
+      <div class="nav next" id="nextBtn" aria-label="Next slide" tabindex="0">❯</div>
     </div>
 
     <div id="messageBox" class="message hidden" aria-hidden="true">
       My dearest husband,<br><br>
-      Every moment with you is a treasure. Thank you for being my partner, my best friend, and my forever love. 
+      Every moment with you is a treasure. Thank you for being my partner, my best friend, and my forever love.
       Here’s to many more anniversaries together. ❤️
-      <div><span id="changeName" class="change-name">Change name</span></div>
+      <div><span id="changeName" class="change-name" role="button" tabindex="0">Change name</span></div>
     </div>
 
-    <video controls width="640">
-  <source src="anniversary.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
+    <video id="mainVideo" class="hidden" aria-hidden="true" controls preload="none" width="640">
+      <source src="anniversary.mp4" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
 
-    <div id="log" class="small hidden" aria-hidden="true"></div>
+    <pre id="log"></pre>
   </main>
 
   <!-- Final overlay with confetti -->
@@ -81,7 +88,7 @@
       <p id="finalText">Thank you for being my partner. Happy Anniversary, with all my love.</p>
       <div style="display:flex;gap:10px;justify-content:center;margin-top:8px;">
         <button id="replayBtn" class="btn">Replay</button>
-        <button id="closeBtn" class="btn" style="background:#eee;color:#333">Close</button>
+        <button id="closeBtn" class="btn secondary">Close</button>
       </div>
     </div>
   </div>
@@ -117,10 +124,11 @@
 
     function write(msg){
       const t = new Date().toLocaleTimeString();
+      log.style.display = 'block';
       log.textContent += `[${t}] ${msg}\n`;
       console.log(msg);
     }
-    function escapeHtml(str){ return str.replace(/[&<>"']/g, (m)=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+    function escapeHtml(str){ return String(str).replace(/[&<>"']/g, (m)=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
 
     function revealSurprise(name){
       const safeName = (name||'').trim();
@@ -128,11 +136,12 @@
       greeting.innerHTML = `<strong>Happy Anniversary, ${escapeHtml(displayName)} 💕</strong>`;
       pageTitle.textContent = `Happy Anniversary, ${displayName}`;
       overlay.style.display = 'none';
+      // show content
       greeting.classList.remove('hidden');
       slideshow.classList.remove('hidden');
       messageBox.classList.remove('hidden');
       mainVideo.classList.remove('hidden');
-      log.classList.remove('hidden');
+      document.getElementById('mainContent').setAttribute('aria-hidden','false');
       showSlide(0);
       startAutoRotate();
       write('Surprise revealed for: ' + displayName);
