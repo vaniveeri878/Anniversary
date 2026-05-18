@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Happy Anniversary ❤️</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    :root { --accent:#b30059; --card:#ffffff; --overlay-rgba: rgba(0,0,0,0.45); }
+    html,body{height:100%;margin:0;font-family:'Segoe UI',Arial,sans-serif;background:#ffe6f0;color:#222}
+    body{
+      background-image:url('background.jpg'); /* replace with your image */
+      background-repeat:no-repeat;
+      background-position:center center;
+      background-size:cover;
+      background-attachment:fixed;
+      text-align:center;
+    }
+    header{padding:28px 16px 8px}
+    h1{margin:0;color:var(--accent);font-size:1.8rem;text-shadow:0 1px 0 rgba(255,255,255,0.6)}
+    .container{max-width:900px;margin:18px auto;padding:0 16px}
+    .slideshow-container{position:relative;max-width:700px;margin:24px auto}
+    .slides{display:none}
+    .slides img{width:100%;border-radius:10px;box-shadow:0 6px 18px rgba(0,0,0,.12)}
+    .nav{position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,.35);color:#fff;padding:10px 14px;border-radius:8px;cursor:pointer;font-size:20px}
+    .nav.prev{left:8px}.nav.next{right:8px}
+    .message{background:var(--card);margin:20px auto;padding:18px;width:85%;border-radius:10px;font-size:1.05rem;box-shadow:0 6px 18px rgba(0,0,0,.06)}
+    .overlay{position:fixed;inset:0;background:var(--overlay-rgba);display:flex;align-items:center;justify-content:center;z-index:9999}
+    .modal{background:#fff;padding:22px;border-radius:12px;width:92%;max-width:420px;text-align:center;box-shadow:0 12px 36px rgba(0,0,0,.25)}
+    .modal h2{margin:0 0 12px;color:var(--accent)}
+    .modal p{margin:0 0 14px;color:#333}
+    .name-input{width:100%;padding:10px 12px;font-size:1rem;border-radius:8px;border:1px solid #ddd;margin-bottom:12px}
+    .btn{background:var(--accent);color:#fff;border:none;padding:10px 14px;border-radius:8px;font-size:1rem;cursor:pointer}
+    .btn.secondary{background:#eee;color:#333}
+    .error{color:#b30059;margin-top:8px;font-weight:600;display:none}
+    .hidden{display:none}
+    .change-name{margin-top:10px;display:inline-block;color:var(--accent);cursor:pointer;font-weight:600}
+    .response-form{display:flex;gap:8px;align-items:center;justify-content:center;margin-top:12px;flex-wrap:wrap}
+    .response-form select{padding:8px 10px;border-radius:8px;border:1px solid #ddd;font-size:1rem}
+    .response-form button{padding:8px 12px}
+    #videoPrompt{margin-top:12px;font-size:1rem;color:#b30059;font-weight:600;cursor:pointer}
+    #videoPrompt span{text-decoration:underline}
+    .icon-wrap{display:flex;align-items:center;justify-content:center;margin:12px 0}
+    .big-heart{font-size:120px;color:#ff2d6f;animation:pulse 900ms ease-in-out infinite}
+    .crying-emoji{font-size:72px;animation:wobble 1200ms ease-in-out infinite}
+    @keyframes pulse{0%{transform:scale(0.92)}50%{transform:scale(1.06)}100%{transform:scale(0.92)}}
+    @keyframes wobble{0%{transform:translateX(0)}25%{transform:translateX(-6px)}50%{transform:translateX(6px)}75%{transform:translateX(-4px)}100%{transform:translateX(0)}}
+  </style>
+</head>
+<body>
+  <!-- Name prompt overlay -->
+  <div id="nameOverlay" class="overlay">
+    <div class="modal">
+      <h2>One small thing first…</h2>
+      <p>Please tell me your name to reveal the surprise</p>
+      <input id="nameInput" class="name-input" type="text" placeholder="Enter your name" />
+      <div style="margin-top:8px"><button id="startBtn" class="btn">Show Surprise</button></div>
+      <div id="errorMsg" class="error">Sorry, that name is not allowed. Please try again.</div>
+    </div>
+  </div>
+
+  <header><h1 id="pageTitle">Happy Anniversary</h1></header>
+
+  <main class="container" id="mainContent" aria-hidden="true">
+    <div id="greeting" class="message hidden"></div>
+
+    <div id="slideshow" class="slideshow-container hidden">
+      <div class="slides"><img src="canva1.jpeg" alt="Design 1"></div>
+      <div class="slides"><img src="canva2.jpeg" alt="Design 2"></div>
+      <div class="nav prev" id="prevBtn">❮</div>
+      <div class="nav next" id="nextBtn">❯</div>
+    </div>
+
+    <div id="messageBox" class="message hidden">
+      <div id="letter">
+        My dearest husband,<br><br>
+        Every moment with you is a treasure. Thank you for being my partner, my best friend, and my forever love.
+        Here’s to many more anniversaries together. ❤️
+      </div>
+
+      <div class="response-form">
+        <label for="marrySelect" style="font-weight:600;color:#333">Will you marry me again</label>
+        <select id="marrySelect" name="marry">
+          <option value="yes">Yes</option>
+          <option value="no">No</option>
+          <option value="maybe">Maybe</option>
+        </select>
+        <button id="sendResponse" class="btn">Send</button>
+      </div>
+
+      <!-- New line for happy moments -->
+      <p id="videoPrompt">💖 For happy moments, <span id="openVideo">click here</span></p>
+
+      <div style="margin-top:10px"><span id="changeName" class="change-name">Change name</span></div>
+    </div>
+
+    <pre id="log"></pre>
+  </main>
+
+  <!-- Final overlay -->
+  <div id="finalOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:10000;align-items:center;justify-content:center">
+    <div id="finalCard" style="background:#fff;border-radius:12px;padding:22px;max-width:520px;width:92%;text-align:center;box-shadow:0 12px 36px rgba(0,0,0,.28)">
+      <div class="icon-wrap" id="finalIcon"></div>
+      <h2>A little surprise</h2>
+      <p id="finalText">Thank you for being my partner. Happy Anniversary, with all my love.</p>
+      <div style="display:flex;gap:10px;justify-content:center;margin-top:8px;">
+        <button id="replayBtn" class="btn">Replay</button>
+        <button id="closeBtn" class="btn secondary">Close</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+const overlay = document.getElementById('nameOverlay');
+const nameInput = document.getElementById('nameInput');
+const startBtn = document.getElementById('startBtn');
+const errorMsg = document.getElementById('errorMsg');
+const greeting = document.getElementById('greeting');
+const slideshow = document.getElementById('slideshow');
+const messageBox = document.getElementById('messageBox');
+const log = document.getElementById('log');
+const changeName = document.getElementById('changeName');
+const pageTitle = document.getElementById('pageTitle');
+const marrySelect = document.getElementById('marrySelect');
+const sendResponse = document.getElementById('sendResponse');
+const openVideo = document.getElementById('openVideo');
+const finalOverlay = document.getElementById('finalOverlay');
+const finalIcon = document.getElementById('finalIcon');
+const finalText = document.getElementById('finalText');
+const replayBtn = document.getElementById('replayBtn');
+const closeBtn = document.getElementById('closeBtn');
+
+const ALLOWED = ['ramakrishna','ram','hubby','baava','vanirk'];
+
+// Slideshow
+let slideIndex = 0;
+const slides = () => document.getElementsByClassName('slides');
+let rotateTimer = null;
+const ROTATE_MS = 3500;
+
+function showSlide(index){
+  const s = slides();
+  if(!s.length) return;
+  if(index < 0) index = s.length - 1;
+  if(index >= s.length) index = 0;
+  slideIndex = index;
+  for(let i=0;i<s.length;i++) s[i].style.display='none';
+  s[slideIndex].style.display='block';
+}
+function nextSlide(){ showSlide(slideIndex+1); }
+function prevSlide(){ showSlide(slideIndex-1); }
+function startAutoRotate(){ stopAutoRotate(); rotateTimer = setInterval(nextSlide, ROTATE_MS); }
+function stopAutoRotate(){ if(rotateTimer){ clearInterval(rotateTimer); rotateTimer=null; } }
+
+document.getElementById('prevBtn').addEventListener('click',()=>{ prevSlide(); startAutoRotate(); });
+document.getElementById('nextBtn').addEventListener('click',()=>{ nextSlide(); startAutoRotate(); });
+
+// Show Surprise button
+startBtn.addEventListener('click',()=>{
+  const raw = nameInput.value || '';
+  const normalized = raw.trim().toLowerCase();
+  if(!normalized){
+    errorMsg.textContent = 'Please enter a name.';
+    errorMsg.style.display = 'block';
+    return;
+  }
+  if(ALLOWED.includes(normalized)){
+    revealSurprise(raw.trim());
+  } else {
+    errorMsg.textContent = 'Sorry, that name is not allowed.';
+    errorMsg.style.display = 'block';
+  }
+});
+
+function revealSurprise(name){
+  const displayName = name || 'My Love';
+  greeting.innerHTML = `<strong>Happy Anniversary, ${displayName} 💕</strong>`;
+  pageTitle.textContent = `Happy Anniversary, ${displayName}`;
+  overlay.style.display = 'none';
+  greeting.classList.remove('hidden');
+  slideshow.classList.remove('hidden');
+  messageBox.classList.remove('hidden');
+  showSlide(0);
+  startAutoRotate();
+}
+
+// Change name
+changeName.addEventListener('click',()=>{
+  overlay.style.display='flex';
+  nameInput.value='';
+  greeting.classList.add('hidden');
+  slideshow.classList.add('hidden');
+  messageBox.classList.add('hidden');
+  stopAutoRotate();
+});
+
+// Response (heart or crying)
+sendResponse.addEventListener('click',()=>{
+  const answer = marrySelect.value;
+  const name = (nameInput.value || 'My Love').trim();
+  showFinalOverlay(name, answer);
+});
+
+function showFinalOverlay(name, answer){
+  finalOverlay.style.display='flex';
+  finalIcon.innerHTML='';
+  if(answer==='yes'){
+    const heart=document.createElement('div');
+    heart.className='big-heart';
+    heart.textContent='❤';
+    finalIcon.appendChild(heart);
+  } else {
+    const wrap=document.createElement('div');
+    wrap.style.display='flex';
+    wrap.style.gap='10px';
+    wrap.style.justifyContent='center';
+    for(let i=0;i<3;i++){
+      const e=document.createElement('div');
+      e.className='crying-emoji';
+      e.textContent='😭';
+      e.style.animationDelay=(i*150)+'ms';
+      wrap.appendChild(e);
+    }
+    finalIcon.appendChild(wrap);
+  }
+  finalText.textContent=`Thank you for being my partner. Happy Anniversary, ${name}.`;
+}
+
+replayBtn.addEventListener('click',()=>{
+  finalOverlay.style.display='none';
+  showSlide(0);
+  startAutoRotate();
+});
+closeBtn.addEventListener('click',()=>{ finalOverlay.style.display='none'; });
+
+// “Click here” opens video in new tab
+openVideo.addEventListener('click',()=>{
+  window.open('anniversary.mp4','_blank'); // replace with your video file or YouTube link
+});
+</script>
+</body>
+</html>
